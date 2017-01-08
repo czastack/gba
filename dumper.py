@@ -4,13 +4,15 @@ import textwrap
 class Dumper:
 	__slots__ = ('input', 'output', 'addrmask')
 
-	def __init__(self, input, output, addrmask=-1):
+	def __init__(self, input, output=None, addrmask=-1):
 		self.input = open(input, 'rb')
 		self.output = output
 		self.addrmask = addrmask
 
-	def __del__(self):
+	def close(self):
 		self.input.close()
+
+	__del__ = close
 
 	def read(self, start, size=1):
 		return self.pos(start).input.read(size)
@@ -21,6 +23,15 @@ class Dumper:
 			i |= self.input.read(1)[0] << (x << 3)
 		return i
 
+	def read8(self):
+		return self.readUint(1)
+
+	def read16(self):
+		return self.readUint(2)
+
+	def read32(self):
+		return self.readUint(4)
+
 	def pos(self, offset):
 		if self.addrmask != -1:
 			offset &= self.addrmask
@@ -28,8 +39,11 @@ class Dumper:
 		return self
 
 	def dump(self, start, size):
-		with open(self.output, 'wb') as output:
-			return output.write(self.read(start, size))
+		if self.output:
+			with open(self.output, 'wb') as output:
+				return output.write(self.read(start, size))
+		else:
+			print('unspecified output')
 
 	def print(self, start, size, step=1, word=1, showaddr=False, retstr=False):
 		"""

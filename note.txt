@@ -1,0 +1,6 @@
+from gba.utils import r1
+an.globals.r1 = r1
+
+from gba.vbacontrol import VbaHelper
+an.globals.v = v = VbaHelper()
+print(v.attach())

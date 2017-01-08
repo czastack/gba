@@ -1,3 +1,5 @@
+import struct
+
 def bytesbeautify(b, offset=0, step=1):
 	if offset == 0 and step == 1:
 		return " ".join("%02X" % x for x in b)
@@ -28,3 +30,17 @@ def strhex(n, size=0):
 
 def checkbytes(b):
 	return hasattr(b, '__iter__') and type(b[0]) is int
+
+def align4(addr):
+	"""使地址对齐4"""
+	tail = addr & 0b11
+	if tail != 0:
+		addr += 4 - tail
+	return addr
+
+def bytes2hex(bs):
+	return ''.join(("%02X" % b for b in bs))
+
+def r1(data):
+	"""先输出低字节的HEX"""
+	return bytes2hex(struct.pack('1L', data))

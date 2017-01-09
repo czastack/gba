@@ -4,3 +4,32 @@ an.globals.r1 = r1
 from gba.vbacontrol import VbaHelper
 an.globals.v = v = VbaHelper()
 print(v.attach())
+
+
+no$gba hack note
+
+NO$GBA.EXE+60D31 - 8B 2D 383B4C00        - mov ebp,[NO$GBA.EXE+C3B38] ; 推测是指针基址
+
+
+[NO$GBA.EXE+C3B38]+8E74+下面对应的偏移量 == 对应内存区的大小
+[NO$GBA.EXE+C3B38]+8E28+下面对应的偏移量 == 对应内存区的指针
+
+0x00000000 0x0
+0x02000000 0x8
+0x03000000 0xc
+0x04000000 0x10
+0x05000000 0x14
+0x06000000 0x18
+0x07000000 0x1c
+0x08000000 0x20
+0x0e000000 0x38
+
+hex(0x0<<2)
+hex(0x2<<2)
+hex(0x3<<2)
+hex(0x4<<2)
+hex(0x5<<2)
+hex(0x6<<2)
+hex(0x7<<2)
+hex(0x8<<2)
+hex(0xe<<2)

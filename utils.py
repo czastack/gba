@@ -44,3 +44,11 @@ def bytes2hex(bs):
 def r1(data):
 	"""先输出低字节的HEX"""
 	return bytes2hex(struct.pack('1L', data))
+
+def rol(a, n, N=32):
+	# 循环左移
+	return ((a >> (N - n)) | (a << n)) & ((1<<N)-1)
+
+def ror(a, n, N=32):
+	# 循环右移
+	return ((a << (N - n)) | (a >> n)) & ((1<<N)-1)

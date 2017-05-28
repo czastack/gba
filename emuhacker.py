@@ -1,10 +1,11 @@
 import ctypes
 from dllhelper import DllHelper
 
-class GbaEmuHelper(DllHelper):
+
+class EmuHacker(DllHelper):
 	__slots__ = ('this',)
 
-	__libname__ = __file__, 'vbacontrol'
+	__libname__ = __file__, 'emuhacker'
 
 	def __del__(self):
 		self.close()
@@ -18,8 +19,6 @@ class GbaEmuHelper(DllHelper):
 		this_t = ctypes.c_void_p
 
 		return (
-			('VbaHandler_new', None, this_t),
-			('NogbaHandler_new', None, this_t),
 			('attach', [this_t], c_bool),
 			('read8', [this_t, u32], u8),
 			('read16', [this_t, u32], u16),
@@ -29,10 +28,13 @@ class GbaEmuHelper(DllHelper):
 			('write32', [this_t, u32, u32], c_bool),
 			('read', [this_t, u32, ctypes.c_size_t, ctypes.c_char_p], c_bool),
 			('write', [this_t, u32, ctypes.c_size_t, ctypes.c_char_p], c_bool),
+			('add', [this_t, u32, u32], c_bool),
 			('close', [this_t], None),
 		)
 
 	def attach(self):
+		if not self.this:
+			self.__init__()
 		return self.clib.attach(self.this)
 
 	def close(self):
@@ -67,21 +69,76 @@ class GbaEmuHelper(DllHelper):
 		"""
 		:param data: bytes
 		"""
+		if not isinstance(data, bytes):
+			data = bytes(data)
 		buf = ctypes.create_string_buffer(data)
 		return self.clib.write(self.this, addr, len(data), buf)
 
-	def patchFile(self, addr, file):
+	def add(self, addr, value=1):
+		self.clib.add(self.this, addr, value)
+
+	def patchFile(self, addr, file, offset=0, size=-1):
 		with open(file, 'rb') as f:
-			self.write(self.this, addr, f.read())
+			if offset:
+				f.seek(offset)
+			self.write(addr, f.read(size))
+
+	def readForSize(self, size):
+		if size == 1:
+			return self.read8
+		elif size == 2:
+			return self.read16
+		return self.read32
+
+	def writeForSize(self, size):
+		if size == 1:
+			return self.write8
+		elif size == 2:
+			return self.write16
+		return self.write32
+
+	def find(self, start, end, value, step=1):
+		read = self.readForSize(abs(step))
+		for addr in range(start, end, step):
+			if read(addr) == value:
+				return addr
 
 
-class VbaHelper(GbaEmuHelper):
+class VbaHacker(EmuHacker):
 	def __init__(self):
 		super().__init__()
 		self.this = self.clib.VbaHandler_new()
 
+	@classmethod
+	def fnsign(cls):
+		return super().fnsign() + (('VbaHandler_new', None, ctypes.c_void_p),)
 
-class NogbaHelper(GbaEmuHelper):
+
+class NogbaHacker(EmuHacker):
 	def __init__(self):
 		super().__init__()
 		self.this = self.clib.NogbaHandler_new()
+
+	@classmethod
+	def fnsign(cls):
+		return super().fnsign() + (('NogbaHandler_new', None, ctypes.c_void_p),)
+
+
+class NogbaNdsHacker(EmuHacker):
+	def __init__(self):
+		super().__init__()
+		self.this = self.clib.NogbaNdsHandler_new()
+
+	@classmethod
+	def fnsign(cls):
+		return super().fnsign() + (('NogbaNdsHandler_new', None, ctypes.c_void_p),)
+
+
+class DeSmuMEHacker(EmuHacker):
+	def __init__(self):
+		super().__init__()
+		self.this = self.clib.DeSmuMEHandler_new()
+
+	@classmethod
+	def fnsign(cls):
+		return super().fnsign() + (('DeSmuMEHandler_new', None, ctypes.c_void_p),)

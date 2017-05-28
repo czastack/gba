@@ -72,20 +72,20 @@ class Dictionary:
 		else:
 			print("b must be integer iterable")
 
-	def encode(self, s):
-		result = bytearray()
-		length = len(s) - 1
+	def encode(self, text, buf=None):
+		result = bytearray() if buf is None else buf
+		length = len(text) - 1
 		i = -1
 
 		while i < length:
 			i += 1
-			ch = s[i]
+			ch = text[i]
 			code = self._tc.get(ord(ch), 0x00)
 			if code == 0:
 				if self.ctrltable and CtrlCode.FMT_START.startswith(ch):
 					con = False
 					for ctrlcode in self.ctrltable.values():
-						m = ctrlcode.encode(s, i)
+						m = ctrlcode.encode(text, i)
 						if m:
 							bs, i = m
 							i -= 1
@@ -137,9 +137,9 @@ class CtrlCode:
 	def encode(self, s, i):
 		if self.argc is 0:
 			fmt_len = len(self.fmt)
-			if s.find(self.fmt, i, i + fmt_len) is i:
+			if s.find(self.fmt, i, i + fmt_len) == i:
 				return (self.code,), i + fmt_len
-		elif s.find(self.FMT_START, i, i + self.FMT_START_LEN) is i:
+		elif s.find(self.FMT_START, i, i + self.FMT_START_LEN) == i:
 			i += self.FMT_START_LEN
 			end = s.find(self.FMT_END, i, i + 32)
 			if end != -1:

@@ -1,3 +1,4 @@
+import re
 import struct
 
 def bytesbeautify(b, offset=0, step=1):
@@ -52,3 +53,10 @@ def rol(a, n, N=32):
 def ror(a, n, N=32):
 	# 循环右移
 	return ((a << (N - n)) | (a >> n)) & ((1<<N)-1)
+
+
+hexReg = re.compile('([\da-fA-F]+)')
+
+def hexCalc(expr):
+	"""计算16进制算式"""
+    return "%X" % eval(hexReg.sub('0x\\1', expr))

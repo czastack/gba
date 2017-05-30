@@ -59,4 +59,4 @@ hexReg = re.compile('([\da-fA-F]+)')
 
 def hexCalc(expr):
 	"""计算16进制算式"""
-    return "%X" % eval(hexReg.sub('0x\\1', expr))
+	return "%X" % eval(hexReg.sub('0x\\1', expr))

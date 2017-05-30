@@ -134,3 +134,17 @@ for i in range(0, 2):
 
 d.close()
 newfont.close()
+
+
+# 16进制计算
+from win32.hotkey import HotKeyHelper
+from win32.keys import getVK, MOD_ALT, MOD_CONTROL
+from gba.utils import hexCalc
+
+def fn(i):
+    an.view = an.active_view()
+    an.map_selected_text(lambda x: hexCalc(x))
+
+keyId = 'hex_calc'
+an.h = h = HotKeyHelper()
+h.RegisterHotKey([(keyId, MOD_ALT | MOD_CONTROL, 'h', fn)])

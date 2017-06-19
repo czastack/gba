@@ -148,3 +148,16 @@ def fn(i):
 keyId = 'hex_calc'
 an.h = h = HotKeyHelper()
 h.RegisterHotKey([(keyId, MOD_ALT | MOD_CONTROL, 'h', fn)])
+
+
+from gba.utils import bytes2hex
+def ph(data):
+	if isinstance(data, int):
+		result = "%X" % data
+	elif isinstance(data, bytes):
+		result = bytes2hex(data)
+	print(result)
+an.globals.ph = ph
+
+from gba.utils import hexCalc
+an.globals.hc = hexCalc

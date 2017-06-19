@@ -18,6 +18,7 @@ def bytesbeautify(b, offset=0, step=1):
 		result.append(fmt % data)
 	return " ".join(result)
 
+
 def strhex(n, size=0):
 	"""
 	:param size: 字节数
@@ -29,8 +30,10 @@ def strhex(n, size=0):
 		size = x >> 3
 	return "%0*X" % ((size << 1), n)
 
+
 def checkbytes(b):
 	return hasattr(b, '__iter__') and type(b[0]) is int
+
 
 def align4(addr):
 	"""使地址对齐4"""
@@ -39,16 +42,20 @@ def align4(addr):
 		addr += 4 - tail
 	return addr
 
+
 def bytes2hex(bs):
 	return ''.join(("%02X" % b for b in bs))
+
 
 def r1(data):
 	"""先输出低字节的HEX"""
 	return bytes2hex(struct.pack('L', data))
 
+
 def rol(a, n, N=32):
 	# 循环左移
 	return ((a >> (N - n)) | (a << n)) & ((1<<N)-1)
+
 
 def ror(a, n, N=32):
 	# 循环右移
